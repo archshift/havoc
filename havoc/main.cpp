@@ -22,7 +22,7 @@ int main(int argc, const char* argv[]) {
     TCLAP::CmdLine cmd("A configuration tool for the CMStorm Havoc mouse.", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_color("c", "color", "LED color", false, "", "color", cmd);
+    TCLAP::ValueArg<std::string> arg_color("c", "color", "LED color", false, "", "string", cmd);
 
     try {
         cmd.parse(argc, argv);
@@ -31,7 +31,7 @@ int main(int argc, const char* argv[]) {
             profile = decode_profile.at(arg_profile.getValue());
         } catch (std::out_of_range e) {
             printf("Unknown profile specified!\n");
-            goto err;
+            return -1;
         }
 
         if (arg_color.isSet()) {
@@ -39,19 +39,17 @@ int main(int argc, const char* argv[]) {
                 settings.color = decode_color.at(arg_color.getValue());
             } catch (std::out_of_range e) {
                 printf("Unknown color specified!\n");
-                goto err;
+                return -1;
             }
         }
     } catch (TCLAP::ArgException &e) {
         printf("Error: %s for arg %s\n", e.error().c_str(), e.argId().c_str());
-        goto err;
+        return -1;
     }
 
     if (!ProfileInterface::SendSettings(profile, settings)) {
         printf("Sending profile settings to device failed!\n");
+        return -1;
     }
-
-err:
-    HW::Deinitialize();
     return 0;
 }

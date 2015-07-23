@@ -4,36 +4,27 @@
 #include <libusb-1.0/libusb.h>
 
 #include "havoc.h"
+#include "raii-libusb.h"
 
-static libusb_context* usb_context = nullptr;
-static libusb_device_handle* havoc_device_handle = nullptr;
+static LibusbContext::Pointer usb_context;
+static LibusbDeviceHandle::Pointer havoc_device_handle;
 
 bool HW::Initialize() {
-    int status = libusb_init(&usb_context);
-    if (status < 0) {
-        printf("`libusb_init` failed with err %i\n", status);
+    usb_context = LibusbContext::Initialize();
+    if (usb_context == nullptr) {
         return false;
     }
-    libusb_set_debug(usb_context, 3); // Very verbose!
+    libusb_set_debug(usb_context->context, 3); // Very verbose!
 
     // TODO: Support multiple mice
-    havoc_device_handle = libusb_open_device_with_vid_pid(usb_context, 0x2516, 0x001d);
-    if (havoc_device_handle == nullptr) {
+    libusb_device_handle* handle = libusb_open_device_with_vid_pid(usb_context->context, 0x2516, 0x001d);
+    if (handle == nullptr) {
         printf("`libusb_open_device_with_vid_pid` failed to open device for vid=0x2516, pid=0x001d\n");
-        libusb_exit(usb_context);
-        usb_context = nullptr;
         return false;
     }
+    havoc_device_handle = LibusbDeviceHandle::Claim(handle);
 
     return true;
-}
-
-void HW::Deinitialize() {
-    libusb_close(havoc_device_handle);
-    havoc_device_handle = nullptr;
-
-    libusb_exit(usb_context);
-    usb_context = nullptr;
 }
 
 uint64_t HW::MakeWriteEepromCommand(uint16_t eeprom_addr, uint8_t data) {
@@ -45,7 +36,7 @@ uint64_t HW::MakeReadEepromCommand(uint16_t eeprom_addr) {
 }
 
 bool HW::CmdSend(uint64_t command) {
-    int status = libusb_control_transfer(havoc_device_handle,
+    int status = libusb_control_transfer(havoc_device_handle->handle,
                                      LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
                                      9, 0x300, 0, (uint8_t*)(&command), 8, 1000);
     if (status != 8 || status < 0) {
@@ -56,7 +47,7 @@ bool HW::CmdSend(uint64_t command) {
 }
 
 bool HW::CmdReceive(uint64_t* data) {
-    int status = libusb_control_transfer(havoc_device_handle,
+    int status = libusb_control_transfer(havoc_device_handle->handle,
                                          LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
                                          1, 0x300, 0, (uint8_t*)data, 8, 1000);
     if (status != 8 || status < 0) {

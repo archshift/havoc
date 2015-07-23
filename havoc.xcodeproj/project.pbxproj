@@ -10,6 +10,7 @@
 		F50592761B5F651A0076BB03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50592751B5F651A0076BB03 /* main.cpp */; };
 		F505927F1B6008DF0076BB03 /* hardware-interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F505927E1B6008DF0076BB03 /* hardware-interface.cpp */; };
 		F58414911B60C692009BB421 /* profile-interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F584148F1B60C692009BB421 /* profile-interface.cpp */; };
+		F58414941B61907A009BB421 /* raii-libusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58414921B61907A009BB421 /* raii-libusb.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +33,8 @@
 		F505927E1B6008DF0076BB03 /* hardware-interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "hardware-interface.cpp"; sourceTree = "<group>"; };
 		F584148F1B60C692009BB421 /* profile-interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "profile-interface.cpp"; sourceTree = "<group>"; };
 		F58414901B60C692009BB421 /* profile-interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "profile-interface.h"; sourceTree = "<group>"; };
+		F58414921B61907A009BB421 /* raii-libusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "raii-libusb.cpp"; sourceTree = "<group>"; };
+		F58414931B61907A009BB421 /* raii-libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "raii-libusb.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +73,8 @@
 				F505927E1B6008DF0076BB03 /* hardware-interface.cpp */,
 				F584148F1B60C692009BB421 /* profile-interface.cpp */,
 				F58414901B60C692009BB421 /* profile-interface.h */,
+				F58414921B61907A009BB421 /* raii-libusb.cpp */,
+				F58414931B61907A009BB421 /* raii-libusb.h */,
 			);
 			path = havoc;
 			sourceTree = "<group>";
@@ -133,6 +138,7 @@
 				F50592761B5F651A0076BB03 /* main.cpp in Sources */,
 				F505927F1B6008DF0076BB03 /* hardware-interface.cpp in Sources */,
 				F58414911B60C692009BB421 /* profile-interface.cpp in Sources */,
+				F58414941B61907A009BB421 /* raii-libusb.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,6 +225,7 @@
 		F505927A1B5F651A0076BB03 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					./externals/tclap/include,
@@ -232,6 +239,7 @@
 		F505927B1B5F651A0076BB03 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					./externals/tclap/include,

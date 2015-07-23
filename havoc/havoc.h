@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-auto case_independent_sorter = [](const std::string &lhs, const std::string &rhs) {
+static auto case_independent_sorter = [](const std::string &lhs, const std::string &rhs) {
     std::string lhs_ = lhs;
     std::string rhs_ = rhs;
     std::transform(lhs_.begin(), lhs_.end(), lhs_.begin(), ::tolower);
