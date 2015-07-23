@@ -22,7 +22,12 @@ int main(int argc, const char* argv[]) {
     TCLAP::CmdLine cmd("A configuration tool for the CMStorm Havoc mouse.", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_color("c", "color", "LED color", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_dpi_setting("", "active-dpi", "DPI configuration to switch to", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_led_mode("", "led-mode", "LED mode", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_led_brightness("", "led-brightness", "LED brightness", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_color("", "color", "LED color", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_button_response("", "button-responsiveness", "Responsiveness of mouse buttons", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_angle_snapping("", "angle-snap", "Enable angle snapping", false, "", "string", cmd);
 
     try {
         cmd.parse(argc, argv);
@@ -34,11 +39,51 @@ int main(int argc, const char* argv[]) {
             return -1;
         }
 
+        if (arg_dpi_setting.isSet()) {
+            try {
+                settings.active_dpi = decode_dpi_setting.at(arg_dpi_setting.getValue());
+            } catch (std::out_of_range e) {
+                printf("Unknown DPI configuration specified!\n");
+                return -1;
+            }
+        }
+        if (arg_led_mode.isSet()) {
+            try {
+                settings.led_mode = decode_led_mode.at(arg_led_mode.getValue());
+            } catch (std::out_of_range e) {
+                printf("Unknown LED mode specified!\n");
+                return -1;
+            }
+        }
+        if (arg_led_brightness.isSet()) {
+            try {
+                settings.led_brightness = decode_led_brightness.at(arg_led_brightness.getValue());
+            } catch (std::out_of_range e) {
+                printf("Unknown LED brightness specified!\n");
+                return -1;
+            }
+        }
         if (arg_color.isSet()) {
             try {
                 settings.color = decode_color.at(arg_color.getValue());
             } catch (std::out_of_range e) {
                 printf("Unknown color specified!\n");
+                return -1;
+            }
+        }
+        if (arg_button_response.isSet()) {
+            try {
+                settings.button_response = DecodeButtonResponse(arg_button_response.getValue());
+            } catch (std::out_of_range e) {
+                printf("Unknown button responsiveness setting specified!\n");
+                return -1;
+            }
+        }
+        if (arg_angle_snapping.isSet()) {
+            try {
+                settings.angle_snapping = decode_bool.at(arg_angle_snapping.getValue());
+            } catch (std::out_of_range e) {
+                printf("Unknown angle snapping boolean value specified!\n");
                 return -1;
             }
         }
