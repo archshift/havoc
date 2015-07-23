@@ -219,7 +219,10 @@
 		F505927A1B5F651A0076BB03 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					./externals/tclap/include,
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "-lusb-1.0";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -229,7 +232,10 @@
 		F505927B1B5F651A0076BB03 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					./externals/tclap/include,
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "-lusb-1.0";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -255,6 +261,7 @@
 				F505927B1B5F651A0076BB03 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
