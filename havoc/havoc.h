@@ -2,6 +2,13 @@
 
 #include <cinttypes>
 
+enum class Profile : uint8_t {
+    PROFILE_0 = 0,
+    PROFILE_1 = 1,
+    PROFILE_2 = 2,
+    PROFILE_3 = 3,
+};
+
 enum class LedMode : uint8_t {
     OFF = 0,
     ON = 1,

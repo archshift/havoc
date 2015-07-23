@@ -19,7 +19,7 @@ int main(int argc, const char* argv[]) {
         false,
     };
 
-    if (!HW::SendProfileSettings(settings)) {
+    if (!HW::SendProfileSettings(Profile::PROFILE_1, settings)) {
         printf("Sending profile settings to device failed!\n");
     }
 

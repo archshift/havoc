@@ -36,24 +36,32 @@ void HW::Deinitialize() {
     usb_context = nullptr;
 }
 
-static uint64_t MakeSendSettingsCommand(uint8_t opcode, uint8_t data) {
-    return ((uint64_t)0x1 << 24) | ((uint64_t)data << 16) | ((uint64_t)opcode << 8) | 0xDE;
+static uint64_t MakeWriteEepromCommand(uint16_t eeprom_addr, uint8_t data) {
+    return ((uint64_t)(eeprom_addr >> 8) << 24) | ((uint64_t)data << 16) | ((uint64_t)(eeprom_addr & 0xFF) << 8) | 0xDE;
 }
 
-bool HW::SendProfileSettings(const ProfileSettings& settings) {
+static uint64_t MakeSendSettingsCommand(Profile profile, uint16_t profile0_offset, uint8_t data) {
+    uint16_t setting_addr = profile0_offset + 0x54 * (uint8_t)profile;
+    if (profile == Profile::PROFILE_3) {
+        setting_addr += 4;
+    }
+    return MakeWriteEepromCommand(setting_addr, data);
+}
+
+bool HW::SendProfileSettings(const Profile profile, const ProfileSettings& settings) {
     int status = 0;
 
     static const int num_cmds = 11;
     uint64_t data[num_cmds] = {
         0x00000000000106C4,
-        MakeSendSettingsCommand(0x0B, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
-        MakeSendSettingsCommand(0x0C, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
-        MakeSendSettingsCommand(0x0D, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
-        MakeSendSettingsCommand(0x46, 0xC0 | settings.angle_snapping),
-        MakeSendSettingsCommand(0x4C, (uint8_t)settings.led_brightness),
-        MakeSendSettingsCommand(0x4D, (uint8_t)settings.led_brightness),
-        MakeSendSettingsCommand(0x4E, (uint8_t)settings.led_brightness),
-        MakeSendSettingsCommand(0x50, settings.button_response * 0x80),
+        MakeSendSettingsCommand(profile, 0x10B, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(profile, 0x10C, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(profile, 0x10D, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(profile, 0x146, 0xC0 | settings.angle_snapping),
+        MakeSendSettingsCommand(profile, 0x14C, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(profile, 0x14D, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(profile, 0x14E, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(profile, 0x150, settings.button_response * 0x80),
         0x00000000000000C4,
         0x00000000000006C4,
     };

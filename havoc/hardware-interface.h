@@ -7,6 +7,6 @@ namespace HW {
 bool Initialize();
 void Deinitialize();
 
-bool SendProfileSettings(const ProfileSettings& settings);
+bool SendProfileSettings(const Profile profile, const ProfileSettings& settings);
 
 }
