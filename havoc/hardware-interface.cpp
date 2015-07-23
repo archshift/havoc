@@ -51,13 +51,14 @@ static uint64_t MakeSendSettingsCommand(Profile profile, uint16_t profile0_offse
 bool HW::SendProfileSettings(const Profile profile, const ProfileSettings& settings) {
     int status = 0;
 
-    static const int num_cmds = 11;
+    static const int num_cmds = 12;
     uint64_t data[num_cmds] = {
         0x00000000000106C4,
+        MakeSendSettingsCommand(profile, 0x100, 0x80 | ((uint8_t)settings.active_dpi & 0xF)),
         MakeSendSettingsCommand(profile, 0x10B, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
         MakeSendSettingsCommand(profile, 0x10C, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
         MakeSendSettingsCommand(profile, 0x10D, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
-        MakeSendSettingsCommand(profile, 0x146, 0xC0 | settings.angle_snapping),
+        MakeSendSettingsCommand(profile, 0x146, 0xC0 | (settings.angle_snapping & 0xF)),
         MakeSendSettingsCommand(profile, 0x14C, (uint8_t)settings.led_brightness),
         MakeSendSettingsCommand(profile, 0x14D, (uint8_t)settings.led_brightness),
         MakeSendSettingsCommand(profile, 0x14E, (uint8_t)settings.led_brightness),

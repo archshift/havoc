@@ -9,6 +9,13 @@ enum class Profile : uint8_t {
     PROFILE_3 = 3,
 };
 
+enum class DpiSetting : uint8_t {
+    DPI_1 = 0,
+    DPI_2 = 1,
+    DPI_3 = 2,
+    DPI_4 = 3,
+};
+
 enum class LedMode : uint8_t {
     OFF = 0,
     ON = 1,
@@ -37,6 +44,8 @@ enum class Color : uint8_t {
 };
 
 struct ProfileSettings {
+    DpiSetting active_dpi;
+
     LedMode led_mode;
     LedBrightness led_brightness;
     Color color;

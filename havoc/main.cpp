@@ -1,6 +1,5 @@
 #include <cstdio>
 
-#include <libusb-1.0/libusb.h>
 
 #include "hardware-interface.h"
 #include "havoc.h"
@@ -12,6 +11,7 @@ int main(int argc, const char* argv[]) {
     }
 
     ProfileSettings settings {
+        DpiSetting::DPI_1,
         LedMode::ON,
         LedBrightness::PERCENT_100,
         Color::BLUE,
