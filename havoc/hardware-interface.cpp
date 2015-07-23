@@ -36,20 +36,32 @@ void HW::Deinitialize() {
     usb_context = nullptr;
 }
 
+static uint64_t MakeSendSettingsCommand(uint8_t opcode, uint8_t data) {
+    return ((uint64_t)0x1 << 24) | ((uint64_t)data << 16) | ((uint64_t)opcode << 8) | 0xDE;
+}
+
 bool HW::SendProfileSettings(const ProfileSettings& settings) {
     int status = 0;
 
-    uint8_t data[6][8] = {
-        {0xC4, 0x06, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
-        {0xDE, 0x0B, (uint8_t)(((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)), 0x01, 0x00, 0x00, 0x00, 0x00},
-        {0xDE, 0x0C, (uint8_t)(((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)), 0x01, 0x00, 0x00, 0x00, 0x00},
-        {0xDE, 0x0D, (uint8_t)(((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)), 0x01, 0x00, 0x00, 0x00, 0x00},
-        {0xC4, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-        {0xC4, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    static const int num_cmds = 11;
+    uint64_t data[num_cmds] = {
+        0x00000000000106C4,
+        MakeSendSettingsCommand(0x0B, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(0x0C, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(0x0D, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF)),
+        MakeSendSettingsCommand(0x46, 0xC0 | settings.angle_snapping),
+        MakeSendSettingsCommand(0x4C, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(0x4D, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(0x4E, (uint8_t)settings.led_brightness),
+        MakeSendSettingsCommand(0x50, settings.button_response * 0x80),
+        0x00000000000000C4,
+        0x00000000000006C4,
     };
 
-    for (int i = 0; i < 6; i++) {
-        status = libusb_control_transfer(havoc_device_handle, LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE, 9, 0x300, 0, data[i], 8, 1000);
+    for (int i = 0; i < num_cmds; i++) {
+        status = libusb_control_transfer(havoc_device_handle,
+                                         LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
+                                         9, 0x300, 0, (uint8_t*)(data + i), 8, 1000);
         if (status != 8 || status < 0) {
             printf("`libusb_control_transfer` failed with err %i\n", status);
             return false;

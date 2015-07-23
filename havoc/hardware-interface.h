@@ -1,6 +1,6 @@
 #pragma once
 
-struct ProfileSettings;
+#include "havoc.h"
 
 namespace HW {
 
