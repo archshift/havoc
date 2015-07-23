@@ -2,6 +2,7 @@
 
 
 #include "hardware-interface.h"
+#include "profile-interface.h"
 #include "havoc.h"
 
 int main(int argc, const char* argv[]) {
@@ -19,7 +20,7 @@ int main(int argc, const char* argv[]) {
         false,
     };
 
-    if (!HW::SendProfileSettings(Profile::PROFILE_1, settings)) {
+    if (!ProfileInterface::SendSettings(profile, settings)) {
         printf("Sending profile settings to device failed!\n");
     }
 

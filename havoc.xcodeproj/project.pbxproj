@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F50592761B5F651A0076BB03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50592751B5F651A0076BB03 /* main.cpp */; };
 		F505927F1B6008DF0076BB03 /* hardware-interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F505927E1B6008DF0076BB03 /* hardware-interface.cpp */; };
+		F58414911B60C692009BB421 /* profile-interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F584148F1B60C692009BB421 /* profile-interface.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +30,8 @@
 		F505927C1B5F8F950076BB03 /* havoc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = havoc.h; sourceTree = "<group>"; };
 		F505927D1B6008CF0076BB03 /* hardware-interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "hardware-interface.h"; sourceTree = "<group>"; };
 		F505927E1B6008DF0076BB03 /* hardware-interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "hardware-interface.cpp"; sourceTree = "<group>"; };
+		F584148F1B60C692009BB421 /* profile-interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "profile-interface.cpp"; sourceTree = "<group>"; };
+		F58414901B60C692009BB421 /* profile-interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "profile-interface.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +68,8 @@
 				F505927C1B5F8F950076BB03 /* havoc.h */,
 				F505927D1B6008CF0076BB03 /* hardware-interface.h */,
 				F505927E1B6008DF0076BB03 /* hardware-interface.cpp */,
+				F584148F1B60C692009BB421 /* profile-interface.cpp */,
+				F58414901B60C692009BB421 /* profile-interface.h */,
 			);
 			path = havoc;
 			sourceTree = "<group>";
@@ -127,6 +132,7 @@
 			files = (
 				F50592761B5F651A0076BB03 /* main.cpp in Sources */,
 				F505927F1B6008DF0076BB03 /* hardware-interface.cpp in Sources */,
+				F58414911B60C692009BB421 /* profile-interface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
