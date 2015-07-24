@@ -1,3 +1,7 @@
+// Copyright 2015 archshift
+// Licensed under GPLv2 or any later version
+// Refer to the license.txt file included.
+
 #pragma once
 
 #include "havoc.h"
