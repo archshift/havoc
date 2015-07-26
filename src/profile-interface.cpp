@@ -6,7 +6,7 @@
 
 #include "hardware-interface.h"
 
-uint64_t ProfileInterface::GetDataAddr(const Profile profile, uint16_t profile0_offset) {
+uint16_t ProfileInterface::GetDataAddr(const Profile profile, uint16_t profile0_offset) {
     uint16_t setting_addr = profile0_offset + 0x54 * (uint8_t)profile;
     if (profile == Profile::PROFILE_3) {
         setting_addr += 4;
