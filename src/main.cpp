@@ -21,17 +21,18 @@ int main(int argc, const char* argv[]) {
 
     if (!ProfileInterface::ReceiveSettings(Profile::PROFILE_0, &settings)) {
         printf("Receiving profile settings from device failed!\n");
+        return -1;
     }
 
     TCLAP::CmdLine cmd("A configuration tool for the CMStorm Havoc mouse.", ' ', "0.1");
 
-    TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_dpi_setting("", "active-dpi", "DPI configuration to switch to", false, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_led_mode("", "led-mode", "LED mode", false, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_led_brightness("", "led-brightness", "LED brightness", false, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_color("", "color", "LED color", false, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_button_response("", "button-responsiveness", "Responsiveness of mouse buttons", false, "", "string", cmd);
-    TCLAP::ValueArg<std::string> arg_angle_snapping("", "angle-snap", "Enable angle snapping", false, "", "string", cmd);
+    TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "profile #", cmd);
+    TCLAP::ValueArg<std::string> arg_dpi_setting("", "active-dpi", "DPI configuration to switch to", false, "", "dpi config #", cmd);
+    TCLAP::ValueArg<std::string> arg_led_mode("", "led-mode", "LED mode", false, "", "mode", cmd);
+    TCLAP::ValueArg<std::string> arg_led_brightness("", "led-brightness", "LED brightness", false, "", "percent", cmd);
+    TCLAP::ValueArg<std::string> arg_color("", "color", "LED color", false, "", "color", cmd);
+    TCLAP::ValueArg<std::string> arg_button_response("", "button-responsiveness", "Responsiveness of mouse buttons", false, "", "ratio", cmd);
+    TCLAP::ValueArg<std::string> arg_angle_snapping("", "angle-snap", "Enable angle snapping", false, "", "bool", cmd);
 
     try {
         cmd.parse(argc, argv);
