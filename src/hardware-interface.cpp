@@ -27,6 +27,12 @@ bool HW::Initialize() {
         return false;
     }
     havoc_device_handle = LibusbDeviceHandle::Claim(handle);
+    if (!havoc_device_handle->DriverUnload(0)) {
+        return false;
+    }
+    if (!havoc_device_handle->InterfaceClaim(0)) {
+        return false;
+    }
 
     return true;
 }

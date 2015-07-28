@@ -22,6 +22,9 @@ public:
 };
 
 class LibusbDeviceHandle {
+    bool interface_drivers_unloaded[0xFF] = {false};
+    bool interface_claims[0xFF] = {false};
+
     LibusbDeviceHandle() {};
 public:
     typedef std::unique_ptr<LibusbDeviceHandle> Pointer;
@@ -30,4 +33,9 @@ public:
 
     static Pointer Claim(libusb_device_handle* context);
     ~LibusbDeviceHandle();
+
+    bool DriverUnload(int interface);
+    bool DriverReload(int interface);
+    bool InterfaceClaim(int interface);
+    bool InterfaceRelease(int interface);
 };
