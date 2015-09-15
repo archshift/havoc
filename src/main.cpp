@@ -33,8 +33,8 @@ int main(int argc, const char* argv[]) {
         cmd.parse(argc, argv);
 
         try {
-            profile = decode_profile.at(arg_profile.getValue());
-        } catch (std::out_of_range e) {
+            profile = bimap_profile.GetEnum(arg_profile.getValue());
+        } catch (std::invalid_argument e) {
             printf("Unknown profile specified!\n");
             return -1;
         }
@@ -51,32 +51,32 @@ int main(int argc, const char* argv[]) {
     try {
         if (arg_dpi_setting.isSet()) {
             try {
-                settings.active_dpi = decode_dpi_setting.at(arg_dpi_setting.getValue());
-            } catch (std::out_of_range e) {
+                settings.active_dpi = bimap_dpi_setting.GetEnum(arg_dpi_setting.getValue());
+            } catch (std::invalid_argument e) {
                 printf("Unknown DPI configuration specified!\n");
                 return -1;
             }
         }
         if (arg_led_mode.isSet()) {
             try {
-                settings.led_mode = decode_led_mode.at(arg_led_mode.getValue());
-            } catch (std::out_of_range e) {
+                settings.led_mode = bimap_led_mode.GetEnum(arg_led_mode.getValue());
+            } catch (std::invalid_argument e) {
                 printf("Unknown LED mode specified!\n");
                 return -1;
             }
         }
         if (arg_led_brightness.isSet()) {
             try {
-                settings.led_brightness = decode_led_brightness.at(arg_led_brightness.getValue());
-            } catch (std::out_of_range e) {
+                settings.led_brightness = bimap_led_brightness.GetEnum(arg_led_brightness.getValue());
+            } catch (std::invalid_argument e) {
                 printf("Unknown LED brightness specified!\n");
                 return -1;
             }
         }
         if (arg_color.isSet()) {
             try {
-                settings.color = decode_color.at(arg_color.getValue());
-            } catch (std::out_of_range e) {
+                settings.color = bimap_color.GetEnum(arg_color.getValue());
+            } catch (std::invalid_argument e) {
                 printf("Unknown color specified!\n");
                 return -1;
             }
@@ -84,15 +84,15 @@ int main(int argc, const char* argv[]) {
         if (arg_button_response.isSet()) {
             try {
                 settings.button_response = DecodeButtonResponse(arg_button_response.getValue());
-            } catch (std::out_of_range e) {
+            } catch (std::invalid_argument e) {
                 printf("Unknown button responsiveness setting specified!\n");
                 return -1;
             }
         }
         if (arg_angle_snapping.isSet()) {
             try {
-                settings.angle_snapping = decode_bool.at(arg_angle_snapping.getValue());
-            } catch (std::out_of_range e) {
+                settings.angle_snapping = bimap_bool.GetEnum(arg_angle_snapping.getValue());
+            } catch (std::invalid_argument e) {
                 printf("Unknown angle snapping boolean value specified!\n");
                 return -1;
             }
