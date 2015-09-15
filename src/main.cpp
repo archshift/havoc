@@ -19,11 +19,6 @@ int main(int argc, const char* argv[]) {
     Profile profile;
     ProfileSettings settings = {};
 
-    if (!ProfileInterface::ReceiveSettings(Profile::PROFILE_0, &settings)) {
-        printf("Receiving profile settings from device failed!\n");
-        return -1;
-    }
-
     TCLAP::CmdLine cmd("A configuration tool for the CMStorm Havoc mouse.", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "profile #", cmd);
@@ -43,7 +38,17 @@ int main(int argc, const char* argv[]) {
             printf("Unknown profile specified!\n");
             return -1;
         }
+    } catch (TCLAP::ArgException &e) {
+        printf("Error: %s for arg %s\n", e.error().c_str(), e.argId().c_str());
+        return -1;
+    }
 
+    if (!ProfileInterface::ReceiveSettings(profile, &settings)) {
+        printf("Receiving profile settings from device failed!\n");
+        return -1;
+    }
+
+    try {
         if (arg_dpi_setting.isSet()) {
             try {
                 settings.active_dpi = decode_dpi_setting.at(arg_dpi_setting.getValue());
