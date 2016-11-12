@@ -4,6 +4,8 @@
 
 #include "profile-interface.h"
 
+#include <functional>
+
 #include "hardware-interface.h"
 
 uint16_t ProfileInterface::GetDataAddr(const Profile profile, uint16_t profile0_offset) {
@@ -23,59 +25,52 @@ bool ProfileInterface::ReadData(const Profile profile, uint16_t profile0_offset,
 }
 
 bool ProfileInterface::ReceiveSettings(const Profile profile, ProfileSettings* settings) {
-    uint8_t active_dpi_byte = 0;  // High nibble: 0x8. Low nibble: active DPI configuration.
-    if (!ReadData(profile, 0x100, &active_dpi_byte)) {
-        return false;
-    }
-    settings->active_dpi = (DpiSetting)(active_dpi_byte & 0xF);
+    struct { uint16_t offs; std::function<void(uint8_t)> cb; } mappings[] = {
+        // High nibble: 0x8. Low nibble: active DPI configuration.
+        { 0x100, [&](uint8_t byte){ settings->active_dpi = (DpiSetting)(byte & 0xF); } },
 
-    uint8_t led_mode_color = 0;  // High nibble: LED mode. Low nibble: LED color.
-    if (!ReadData(profile, 0x10B, &led_mode_color)) {
-        return false;
-    }
-    settings->led_mode = (LedMode)(led_mode_color >> 4);
-    settings->color = (Color)(led_mode_color & 0xF);
+        // High nibble: LED mode. Low nibble: LED color.
+        { 0x10B, [&](uint8_t byte){ settings->led_mode = (LedMode)(byte >> 4);
+                                    settings->color = (Color)(byte & 0xF); } },
 
-    uint8_t angle_snapping = 0;  // High nibble: ?. Low nibble: Angle snapping bool.
-    if (!ReadData(profile, 0x146, &angle_snapping)) {
-        return false;
-    }
-    settings->angle_snapping = (bool)angle_snapping;
+        // High nibble: ?. Low nibble: Angle snapping bool.
+        { 0x146, [&](uint8_t byte){ settings->angle_snapping = (bool)byte; } },
 
-    uint8_t led_brightness = 0;  // Byte: LED brightness.
-    if (!ReadData(profile, 0x14C, &led_brightness)) {
-        return false;
-    }
-    settings->led_brightness = (LedBrightness)led_brightness;
+        // Byte: LED brightness.
+        { 0x14C, [&](uint8_t byte){ settings->led_brightness = (LedBrightness)byte; } },
 
-    uint8_t button_response = 0;  // Byte: Button responsiveness ratio
-    if (!ReadData(profile, 0x150, &button_response)) {
-        return false;
+        // Byte: Button responsiveness ratio
+        { 0x150, [&](uint8_t byte){ settings->button_response = (float)byte / 0x80; } },
+    };
+
+    for (auto mapping : mappings) {
+        uint8_t byte = 0;
+        if (!ReadData(profile, mapping.offs, &byte)) {
+            return false;
+        }
+        mapping.cb(byte);
     }
-    settings->button_response = (float)button_response / 0x80;
 
     return true;
 }
 
 bool ProfileInterface::SendSettings(const Profile profile, const ProfileSettings& settings) {
-    if (!WriteData(profile, 0x100, 0x80 | ((uint8_t)settings.active_dpi & 0xF))) {
-        return false;
-    }
-    for (int i = 0; i < 3; i++) {
-        if (!WriteData(profile, 0x10B + i, ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF))) {
+    struct { uint16_t offs; std::function<uint8_t()> cb; } mappings[] = {
+        { 0x100, [&]{ return 0x80 | ((uint8_t)settings.active_dpi & 0xF); } },
+        { 0x10B, [&]{ return ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF); } },
+        { 0x10C, [&]{ return ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF); } },
+        { 0x10D, [&]{ return ((uint8_t)settings.led_mode << 4) | ((uint8_t)settings.color & 0xF); } },
+        { 0x146, [&]{ return 0xC0 | (settings.angle_snapping & 0xF); } },
+        { 0x14C, [&]{ return (uint8_t)settings.led_brightness; } },
+        { 0x14D, [&]{ return (uint8_t)settings.led_brightness; } },
+        { 0x14E, [&]{ return (uint8_t)settings.led_brightness; } },
+        { 0x150, [&]{ return settings.button_response * 0x80; } },
+    };
+
+    for (auto mapping : mappings) {
+        if (!WriteData(profile, mapping.offs, mapping.cb())) {
             return false;
         }
-    }
-    if (!WriteData(profile, 0x146, 0xC0 | (settings.angle_snapping & 0xF))) {
-        return false;
-    }
-    for (int i = 0; i < 3; i++) {
-        if (!WriteData(profile, 0x14C + i, (uint8_t)settings.led_brightness)) {
-            return false;
-        }
-    }
-    if (!WriteData(profile, 0x150, settings.button_response * 0x80)) {
-        return false;
     }
     return true;
 }
