@@ -25,7 +25,7 @@ public:
         });
         if (it != std::end(data))
             return it->first;
-        throw std::invalid_argument(e);
+        throw std::invalid_argument(std::to_string((int)e));
     }
 
     E GetEnum(const std::string& str) const

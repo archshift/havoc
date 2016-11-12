@@ -13,6 +13,8 @@ bool Initialize();
 uint64_t MakeWriteEepromCommand(uint16_t eeprom_addr, uint8_t data);
 uint64_t MakeReadEepromCommand(uint16_t eeprom_addr);
 
+void DelayMs(unsigned ms);
+
 bool CmdSend(uint64_t command);
 bool CmdReceive(uint64_t* data);
 

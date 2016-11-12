@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <libusb-1.0/libusb.h>
+#include <chrono>
 
 #include "havoc.h"
 #include "raii-libusb.h"
@@ -45,10 +46,18 @@ uint64_t HW::MakeReadEepromCommand(uint16_t eeprom_addr) {
     return ((uint64_t)(eeprom_addr >> 8) << 24) | ((uint64_t)(eeprom_addr & 0xFF) << 8) | 0xDF;
 }
 
+void HW::DelayMs(unsigned ms) {
+    auto later = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(ms);
+    while (std::chrono::high_resolution_clock::now() < later) {
+        __asm__ __volatile__ ("");
+    }
+}
+
 bool HW::CmdSend(uint64_t command) {
     int status = libusb_control_transfer(havoc_device_handle->handle,
                                      LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
                                      9, 0x300, 0, (uint8_t*)(&command), 8, 1000);
+    DelayMs(4);
     if (status != 8 || status < 0) {
         printf("`libusb_control_transfer` out failed with err %i\n", status);
         return false;
@@ -60,6 +69,7 @@ bool HW::CmdReceive(uint64_t* data) {
     int status = libusb_control_transfer(havoc_device_handle->handle,
                                          LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
                                          1, 0x300, 0, (uint8_t*)data, 8, 1000);
+    DelayMs(4);
     if (status != 8 || status < 0) {
         printf("`libusb_control_transfer` in failed with err %i\n", status);
         return false;
