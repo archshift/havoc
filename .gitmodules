@@ -1,0 +1,6 @@
+[submodule "externals/tclap"]
+	path = externals/tclap
+	url = git://git.code.sf.net/p/tclap/code
+[submodule "externals/libusb"]
+	path = externals/libusb
+	url = https://github.com/libusb/libusb

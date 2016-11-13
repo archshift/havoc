@@ -49,14 +49,18 @@ uint64_t HW::MakeReadEepromCommand(uint16_t eeprom_addr) {
 void HW::DelayMs(unsigned ms) {
     auto later = std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(ms);
     while (std::chrono::high_resolution_clock::now() < later) {
-        __asm__ __volatile__ ("");
+#ifdef _MSC_VER
+        __noop;
+#else
+        __asm__ __volatile__("");
+#endif
     }
 }
 
 bool HW::CmdSend(uint64_t command) {
     int status = libusb_control_transfer(havoc_device_handle->handle,
-                                     LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
-                                     9, 0x300, 0, (uint8_t*)(&command), 8, 1000);
+                                         LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
+                                         9, 0x300, 0, (uint8_t*)(&command), 8, 1000);
     DelayMs(4);
     if (status != 8 || status < 0) {
         printf("`libusb_control_transfer` out failed with err %i\n", status);
@@ -118,7 +122,7 @@ bool HW::WriteEepromBytes(uint16_t eeprom_addr, const uint8_t* byte_buf, uint16_
 
     for (uint16_t i = 0; i < num_bytes; i++) {
         if (!CmdSend(MakeWriteEepromCommand(eeprom_addr + i, byte_buf[i]))) {
-            break;
+            return false;
         }
     }
 
