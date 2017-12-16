@@ -22,6 +22,7 @@ int main(int argc, const char* argv[]) {
     TCLAP::CmdLine cmd("A configuration tool for the CMStorm Havoc mouse.", ' ', "0.1");
 
     TCLAP::ValueArg<std::string> arg_profile("p", "profile", "Profile to edit", true, "", "profile #", cmd);
+    TCLAP::SwitchArg arg_query("q", "query", "Query profile settings", cmd);
     TCLAP::ValueArg<std::string> arg_dpi_setting("", "active-dpi", "DPI configuration to switch to", false, "", "dpi config #", cmd);
     TCLAP::ValueArg<std::string> arg_led_mode("", "led-mode", "LED mode", false, "", "mode", cmd);
     TCLAP::ValueArg<std::string> arg_led_brightness("", "led-brightness", "LED brightness", false, "", "percent", cmd);
@@ -100,6 +101,23 @@ int main(int argc, const char* argv[]) {
     } catch (TCLAP::ArgException &e) {
         printf("Error: %s for arg %s\n", e.error().c_str(), e.argId().c_str());
         return -1;
+    }
+
+    if (arg_query.isSet()) {
+        printf("Profile %i settings:\n", (int)profile);
+        auto fields = settings.FormatFields();
+
+        size_t title_max = 0;
+        for (auto pair : fields) {
+            title_max = std::max(title_max, pair.first.length());
+        }
+        for (auto pair : fields) {
+            std::string title = pair.first;
+            std::string val = pair.second;
+            size_t pad_amount = title_max - title.length();
+            printf("%s | %s\n", (title + std::string(pad_amount, ' ')).c_str(),
+                                val.c_str());
+        }
     }
 
     if (!ProfileInterface::SendSettings(profile, settings)) {

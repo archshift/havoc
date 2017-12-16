@@ -8,6 +8,7 @@
 #include <cinttypes>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 template <typename E>
@@ -44,11 +45,11 @@ public:
 };
 
 static const EnumStringBimap<bool> bimap_bool {
-    {"true", true},
     {"on", true},
+    {"true", true},
     {"1", true},
-    {"false", false},
     {"off", false},
+    {"false", false},
     {"0", false},
 };
 
@@ -167,4 +168,15 @@ struct ProfileSettings {
      */
     float button_response;
     bool angle_snapping;
+
+    std::unordered_map<std::string, std::string> FormatFields() const {
+        std::unordered_map<std::string, std::string> strs;
+        strs["Active DPI mode"] = bimap_dpi_setting.GetString(active_dpi);
+        strs["LED mode"] = bimap_led_mode.GetString(led_mode);
+        strs["LED brightness"] = bimap_led_brightness.GetString(led_brightness);
+        strs["LED color"] = bimap_color.GetString(color);
+        strs["Button responsiveness"] = std::to_string(int(button_response * 100)) + "%";
+        strs["Angle snapping"] = bimap_bool.GetString(angle_snapping);
+        return strs;
+    }
 };
